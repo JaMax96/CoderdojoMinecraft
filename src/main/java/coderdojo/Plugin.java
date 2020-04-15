@@ -33,7 +33,7 @@ public class Plugin extends JavaPlugin {
             world.setStorm(false);
             world.setSpawnFlags(false,false);
             //TODO big enough?
-            world.getWorldBorder().setSize(500);
+            world.getWorldBorder().setSize(1000);
         });
     }
 
