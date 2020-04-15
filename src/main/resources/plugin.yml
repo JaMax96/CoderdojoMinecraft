@@ -1,0 +1,14 @@
+main: coderdojo.Plugin
+name: SessionGuard
+version: '0.1'
+description: this is a plugin
+author: coderdojo_linz
+depend:
+  - WorldGuard
+commands:
+  gohome:
+    description: go to your plot
+    aliases:
+    - gehheim
+    usage: /<command>
+
