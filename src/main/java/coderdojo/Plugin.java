@@ -26,7 +26,6 @@ public class Plugin extends JavaPlugin {
         initSettings();
         initGlobalRegion();
         plotManager = new PlotManager();
-        plotManager.init();
         getServer().getPluginManager().registerEvents(new JoinListener(plotManager), this);
     }
 
@@ -34,7 +33,6 @@ public class Plugin extends JavaPlugin {
         Bukkit.getWorlds().forEach(world -> {
             ProtectedCuboidRegion region = new ProtectedCuboidRegion("global" + world.getName(), true, BlockVector3.at(-500, 0, -500), BlockVector3.at(500, 255, 500));
             region.setFlag(Flags.BUILD, StateFlag.State.DENY);
-            region.setFlag(Flags.GREET_MESSAGE, "heyooo");
             region.setPriority(-1);
 
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
