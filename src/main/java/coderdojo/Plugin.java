@@ -1,5 +1,13 @@
 package coderdojo;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
@@ -16,9 +24,23 @@ public class Plugin extends JavaPlugin {
     @Override
     public void onEnable() {
         initSettings();
+        initGlobalRegion();
         plotManager = new PlotManager();
         plotManager.init();
         getServer().getPluginManager().registerEvents(new JoinListener(plotManager), this);
+    }
+
+    private void initGlobalRegion() {
+        Bukkit.getWorlds().forEach(world -> {
+            ProtectedCuboidRegion region = new ProtectedCuboidRegion("global" + world.getName(), true, BlockVector3.at(-500, 0, -500), BlockVector3.at(500, 255, 500));
+            region.setFlag(Flags.BUILD, StateFlag.State.DENY);
+            region.setFlag(Flags.GREET_MESSAGE, "heyooo");
+            region.setPriority(-1);
+
+            RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+            RegionManager regions = container.get(BukkitAdapter.adapt(world));
+            regions.addRegion(region);
+        });
     }
 
     private void initSettings() {
@@ -31,7 +53,7 @@ public class Plugin extends JavaPlugin {
             world.setGameRule(GameRule.MOB_GRIEFING, false);
             world.setTime(5000);
             world.setStorm(false);
-            world.setSpawnFlags(false,false);
+            world.setSpawnFlags(false, false);
             //TODO big enough?
             world.getWorldBorder().setSize(1000);
         });
