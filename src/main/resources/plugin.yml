@@ -11,4 +11,7 @@ commands:
     aliases:
     - gehheim
     usage: /<command>
+  reset:
+    description: reset your plot
+    usage: /<command>
 

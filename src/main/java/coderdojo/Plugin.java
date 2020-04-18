@@ -68,6 +68,11 @@ public class Plugin extends JavaPlugin {
                 plotManager.sendHome((Player) sender);
             }
         }
+        if (command.getName().equals("reset")) {
+            if (sender instanceof Player) {
+                plotManager.resetPlot((Player) sender);
+            }
+        }
         return true;
     }
 

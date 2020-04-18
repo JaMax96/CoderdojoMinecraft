@@ -31,7 +31,7 @@ public class PlotManager {
     private ProtectedRegion createPlot(Player player) {
         ProtectedRegion region = createRegion(player);
         getRegionManager(player).addRegion(region);
-        preparePlot(player.getWorld(), region);
+        resetPlot(player.getWorld(), region);
         return region;
     }
 
@@ -40,14 +40,20 @@ public class PlotManager {
         return container.get(BukkitAdapter.adapt(player.getWorld()));
     }
 
-    private void preparePlot(World world, ProtectedRegion region) {
+    private void resetPlot(World world, ProtectedRegion region) {
         int maxX = Math.max(region.getMinimumPoint().getX(), region.getMaximumPoint().getX());
         int minX = Math.min(region.getMinimumPoint().getX(), region.getMaximumPoint().getX());
         int maxZ = Math.max(region.getMinimumPoint().getZ(), region.getMaximumPoint().getZ());
         int minZ = Math.min(region.getMinimumPoint().getZ(), region.getMaximumPoint().getZ());
         for (int x = minX; x <= maxX; x++) {
             for (int z = minZ; z <= maxZ; z++) {
+                world.getBlockAt(x, 0, z).setType(Material.BEDROCK);
+                world.getBlockAt(x, 1, z).setType(Material.DIRT);
+                world.getBlockAt(x, 2, z).setType(Material.DIRT);
                 world.getBlockAt(x, 3, z).setType(Material.IRON_BLOCK);
+                for (int y = 4; y < world.getMaxHeight(); y++) {
+                    world.getBlockAt(x, y, z).setType(Material.AIR);
+                }
             }
         }
     }
@@ -71,5 +77,9 @@ public class PlotManager {
 
     public void sendHome(Player player) {
         teleportPlayerToPlot(player, getRegionManager(player).getRegion(getPlotName(player)));
+    }
+
+    public void resetPlot(Player player) {
+        resetPlot(player.getWorld(), getRegionManager(player).getRegion(getPlotName(player)));
     }
 }
