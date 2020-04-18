@@ -15,28 +15,29 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class PlotManager {
 
-    private AtomicInteger counter = new AtomicInteger(0);
     private RegionGenerator regionGenerator = new RegionGenerator();
-    private Map<String, ProtectedRegion> plots = new HashMap<>();
 
     public void playerJoined(Player player) {
         player.sendMessage("Dear " + player.getName() + ", welcome to our server!");
-        teleportPlayerToPlot(player, plots.computeIfAbsent(player.getName(), name -> createPlot(player)));
+        if (!getRegionManager(player).hasRegion(getPlotName(player))) {
+            ProtectedRegion plot = createPlot(player);
+            getRegionManager(player).addRegion(plot);
+            teleportPlayerToPlot(player, plot);
+        }
     }
 
     private ProtectedRegion createPlot(Player player) {
-        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionManager regions = container.get(BukkitAdapter.adapt(player.getWorld()));
         ProtectedRegion region = createRegion(player);
-        regions.addRegion(region);
+        getRegionManager(player).addRegion(region);
         preparePlot(player.getWorld(), region);
         return region;
+    }
+
+    private RegionManager getRegionManager(Player player) {
+        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        return container.get(BukkitAdapter.adapt(player.getWorld()));
     }
 
     private void preparePlot(World world, ProtectedRegion region) {
@@ -58,13 +59,17 @@ public class PlotManager {
 
     private ProtectedRegion createRegion(Player player) {
         BlockVector3[] regionVectors = regionGenerator.nextRegion();
-        ProtectedCuboidRegion region = new ProtectedCuboidRegion("playerplot" + counter.getAndIncrement(), true, regionVectors[0], regionVectors[1]);
+        ProtectedCuboidRegion region = new ProtectedCuboidRegion(getPlotName(player), false, regionVectors[0], regionVectors[1]);
         region.getOwners().addPlayer(WorldGuardPlugin.inst().wrapPlayer(player));
         region.setFlag(Flags.BUILD.getRegionGroupFlag(), RegionGroup.MEMBERS);
         return region;
     }
 
+    private String getPlotName(Player player) {
+        return "playerplot-" + player.getUniqueId().toString();
+    }
+
     public void sendHome(Player player) {
-        teleportPlayerToPlot(player, plots.get(player.getName()));
+        teleportPlayerToPlot(player, getRegionManager(player).getRegion(getPlotName(player)));
     }
 }
