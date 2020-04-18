@@ -18,10 +18,10 @@ public class RegionGenerator {
         BlockVector3[] region = {
                 BlockVector3.at(currentX, 0, currentZ), BlockVector3.at(currentX + PLOT_SIZE, 255, currentZ + PLOT_SIZE)
         };
-        currentX += PLOT_SIZE + PLOT_DISTANCE;
+        currentX += PLOT_SIZE + PLOT_DISTANCE + 1;
         if (currentX + PLOT_SIZE > END_X) {
             currentX = START_X;
-            currentZ += PLOT_SIZE + PLOT_DISTANCE;
+            currentZ += PLOT_SIZE + PLOT_DISTANCE + 1;
             if (currentZ + PLOT_SIZE > END_Z) {
                 throw new IllegalStateException("OUT OF SPACE, AAAAAH! (also i know, the last plot is never handed out, whatever)");
             }
