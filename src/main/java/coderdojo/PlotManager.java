@@ -48,10 +48,11 @@ public class PlotManager {
         for (int x = minX; x <= maxX; x++) {
             for (int z = minZ; z <= maxZ; z++) {
                 world.getBlockAt(x, 0, z).setType(Material.BEDROCK);
-                world.getBlockAt(x, 1, z).setType(Material.DIRT);
-                world.getBlockAt(x, 2, z).setType(Material.DIRT);
-                world.getBlockAt(x, 3, z).setType(Material.IRON_BLOCK);
-                for (int y = 4; y < world.getMaxHeight(); y++) {
+                for (int y = 1; y < 20; y++) {
+                    world.getBlockAt(x, y, z).setType(Material.DIRT);
+                }
+                world.getBlockAt(x, 20, z).setType(Material.IRON_BLOCK);
+                for (int y = 21; y < world.getMaxHeight(); y++) {
                     world.getBlockAt(x, y, z).setType(Material.AIR);
                 }
             }
@@ -60,7 +61,14 @@ public class PlotManager {
 
     private void teleportPlayerToPlot(Player player, ProtectedRegion region) {
         BlockVector3 middle = region.getMinimumPoint().add(region.getMaximumPoint()).divide(2);
-        player.teleport(new Location(player.getWorld(), middle.getX(), 4, middle.getZ()));
+        World world = player.getWorld();
+        int y = 22;
+        while (y < world.getMaxHeight()
+                && !(world.getBlockAt(middle.getX(), y - 1, middle.getBlockZ()).getType().equals(Material.AIR)
+                && world.getBlockAt(middle.getX(), y, middle.getBlockZ()).getType().equals(Material.AIR))) {
+            y++;
+        }
+        player.teleport(new Location(world, middle.getX(), y, middle.getZ()));
     }
 
     private ProtectedRegion createRegion(Player player) {
