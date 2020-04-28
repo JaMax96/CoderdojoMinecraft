@@ -11,10 +11,20 @@ public class RegionGenerator {
     private static final int PLOT_SIZE = 20;
     private static final int PLOT_DISTANCE = 8;
 
-    private int currentX = START_X;
-    private int currentZ = START_Z;
+    private DataService dataService;
+    private RegionGeneratorData data;
+
+    public RegionGenerator(DataService dataService) {
+        this.dataService = dataService;
+        data = dataService.loadRegionGeneratorData();
+        if (data == null) {
+            data = new RegionGeneratorData(START_X, START_Z);
+        }
+    }
 
     public BlockVector3[] nextRegion() {
+        int currentX = data.x;
+        int currentZ = data.z;
         BlockVector3[] region = {
                 BlockVector3.at(currentX, 0, currentZ), BlockVector3.at(currentX + PLOT_SIZE, 255, currentZ + PLOT_SIZE)
         };
@@ -27,6 +37,9 @@ public class RegionGenerator {
             }
         }
 
+        data.x = currentX;
+        data.z = currentZ;
+        dataService.saveRegionGeneratorData(data);
         return region;
     }
 }

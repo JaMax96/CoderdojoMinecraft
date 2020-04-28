@@ -24,9 +24,10 @@ public class Plugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        DataService dataService = new DataService(getDataFolder());
         initSettings();
         initGlobalRegion();
-        plotManager = new PlotManager();
+        plotManager = new PlotManager(dataService);
         getServer().getPluginManager().registerEvents(new JoinListener(plotManager), this);
         initGameModeHandler();
     }

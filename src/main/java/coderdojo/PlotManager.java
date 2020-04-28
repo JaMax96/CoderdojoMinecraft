@@ -17,7 +17,11 @@ import org.bukkit.entity.Player;
 
 public class PlotManager {
 
-    private RegionGenerator regionGenerator = new RegionGenerator();
+    private RegionGenerator regionGenerator;
+
+    public PlotManager(DataService dataService) {
+        this.regionGenerator = new RegionGenerator(dataService);
+    }
 
     public void playerJoined(Player player) {
         player.sendMessage("Dear " + player.getName() + ", welcome to our server!");
@@ -62,6 +66,7 @@ public class PlotManager {
     private void teleportPlayerToPlot(Player player, ProtectedRegion region) {
         BlockVector3 middle = region.getMinimumPoint().add(region.getMaximumPoint()).divide(2);
         World world = player.getWorld();
+        //TODO search from above
         int y = 22;
         while (y < world.getMaxHeight()
                 && !(world.getBlockAt(middle.getX(), y - 1, middle.getBlockZ()).getType().equals(Material.AIR)
