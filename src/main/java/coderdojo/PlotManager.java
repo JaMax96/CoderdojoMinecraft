@@ -84,10 +84,14 @@ public class PlotManager {
     }
 
     public void sendHome(Player player) {
-        teleportPlayerToPlot(player, getRegionManager(player).getRegion(getPlotName(player)));
+        teleportPlayerToPlot(player, getPlot(player));
+    }
+
+    private ProtectedRegion getPlot(Player player) {
+        return getRegionManager(player).getRegion(getPlotName(player));
     }
 
     public void resetPlot(Player player) {
-        resetPlot(player.getWorld(), getRegionManager(player).getRegion(getPlotName(player)));
+        resetPlot(player.getWorld(), getPlot(player));
     }
 }
