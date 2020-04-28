@@ -8,7 +8,7 @@ public class RegionGenerator {
     private static final int START_Z = -450;
     private static final int END_X = 70;
     private static final int END_Z = 450;
-    private static final int PLOT_SIZE = 20;
+    private static final int PLOT_SIZE = 30;
     private static final int PLOT_DISTANCE = 8;
 
     private DataService dataService;
