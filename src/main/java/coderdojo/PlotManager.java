@@ -66,12 +66,11 @@ public class PlotManager {
     private void teleportPlayerToPlot(Player player, ProtectedRegion region) {
         BlockVector3 middle = region.getMinimumPoint().add(region.getMaximumPoint()).divide(2);
         World world = player.getWorld();
-        //TODO search from above
-        int y = 22;
-        while (y < world.getMaxHeight()
-                && !(world.getBlockAt(middle.getX(), y - 1, middle.getBlockZ()).getType().equals(Material.AIR)
-                && world.getBlockAt(middle.getX(), y, middle.getBlockZ()).getType().equals(Material.AIR))) {
-            y++;
+        int y = world.getMaxHeight() + 1;
+        while (y > 0
+                && (world.getBlockAt(middle.getX(), y, middle.getBlockZ()).getType().equals(Material.AIR)
+                && world.getBlockAt(middle.getX(), y - 1, middle.getBlockZ()).getType().equals(Material.AIR))) {
+            y--;
         }
         player.teleport(new Location(world, middle.getX(), y, middle.getZ()));
     }
