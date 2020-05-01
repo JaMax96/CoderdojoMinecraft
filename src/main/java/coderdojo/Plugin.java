@@ -21,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Plugin extends JavaPlugin {
 
     private PlotManager plotManager;
+    private WatchMe watchMe;
 
     @Override
     public void onEnable() {
@@ -30,6 +31,7 @@ public class Plugin extends JavaPlugin {
         plotManager = new PlotManager(dataService);
         getServer().getPluginManager().registerEvents(new JoinListener(plotManager), this);
         initGameModeHandler();
+        watchMe = new WatchMe();
     }
 
     private void initGameModeHandler() {
@@ -79,6 +81,16 @@ public class Plugin extends JavaPlugin {
         if (command.getName().equals("reset")) {
             if (sender instanceof Player) {
                 plotManager.resetPlot((Player) sender);
+            }
+        }
+        if (command.getName().equals("gowatch")) {
+            if (sender instanceof Player) {
+                watchMe.goWatch((Player) sender);
+            }
+        }
+        if (command.getName().equals("watchme")) {
+            if (sender instanceof Player) {
+                watchMe.watchMe((Player) sender);
             }
         }
         return true;

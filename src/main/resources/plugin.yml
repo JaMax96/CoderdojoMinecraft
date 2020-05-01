@@ -14,4 +14,10 @@ commands:
   reset:
     description: reset your plot
     usage: /<command>
-
+  gowatch:
+    description: teleports you to the presenting player
+    usage: /<command>
+  watchme:
+    description: sets you as the presenting player
+    usage: /<command>
+    permission: minecraft.command.ban
