@@ -10,13 +10,14 @@ public class RegionGenerator {
     private static final int END_Z = 450;
     private static final int PLOT_SIZE = 30;
     private static final int PLOT_DISTANCE = 8;
+    public static final String REGION_GENERATOR = "regionGenerator";
 
     private DataService dataService;
     private RegionGeneratorData data;
 
     public RegionGenerator(DataService dataService) {
         this.dataService = dataService;
-        data = dataService.loadRegionGeneratorData();
+        data = dataService.load(REGION_GENERATOR);
         if (data == null) {
             data = new RegionGeneratorData(START_X, START_Z);
         }
@@ -39,7 +40,7 @@ public class RegionGenerator {
 
         data.x = currentX;
         data.z = currentZ;
-        dataService.saveRegionGeneratorData(data);
+        dataService.save(REGION_GENERATOR, data);
         return region;
     }
 }
