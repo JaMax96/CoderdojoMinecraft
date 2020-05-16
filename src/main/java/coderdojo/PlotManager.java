@@ -13,6 +13,7 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.io.Serializable;
@@ -126,7 +127,39 @@ public class PlotManager {
     }
 
     public void resetPlotToTemplate(Player player, String templateName) {
+        if (!templates.containsKey(templateName)) {
+            player.sendMessage("template " + templateName + " does not exist");
+        } else {
+            ProtectedRegion plot = getPlot(player);
+            int x1 = plot.getMinimumPoint().getX();
+            int x2 = plot.getMaximumPoint().getX();
+            int z1 = plot.getMinimumPoint().getZ();
+            int z2 = plot.getMaximumPoint().getZ();
+            PlotCoordinates coords = templates.get(templateName);
+            int coordsMinX = Math.min(coords.startX, coords.endX);
+            int coordsMinZ = Math.min(coords.startZ, coords.endZ);
+            int xOffset = coordsMinX - (Math.min(x1, x2));
+            int zOffset = coordsMinZ - (Math.min(z1, z2));
 
+            resetPlotToTemplate(player.getWorld(), x1, x2, z1, z2, xOffset, zOffset);
+        }
+    }
+
+    private void resetPlotToTemplate(World world, int x1, int x2, int z1, int z2, int xOffset, int zOffset) {
+        int maxX = Math.max(x1, x2);
+        int minX = Math.min(x1, x2);
+        int maxZ = Math.max(z1, z2);
+        int minZ = Math.min(z1, z2);
+        for (int x = minX; x <= maxX; x++) {
+            for (int z = minZ; z <= maxZ; z++) {
+                for (int y = 0; y < world.getMaxHeight(); y++) {
+                    Block to = world.getBlockAt(x, y, z);
+                    Block from = world.getBlockAt(x + xOffset, y, z + zOffset);
+                    to.setType(from.getType());
+                    to.setBlockData(from.getBlockData().clone());
+                }
+            }
+        }
     }
 
     public void teleportToTemplate(Player player, String templateName) {
