@@ -43,7 +43,7 @@ public class Plugin extends JavaPlugin {
         Bukkit.getWorlds().forEach(world -> {
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionManager regions = container.get(BukkitAdapter.adapt(world));
-            if(!regions.hasRegion("global" + world.getName())){
+            if (!regions.hasRegion("global" + world.getName())) {
                 ProtectedCuboidRegion region = new ProtectedCuboidRegion("global" + world.getName(), false, BlockVector3.at(-500, 0, -500), BlockVector3.at(500, 255, 500));
                 region.setFlag(Flags.BUILD, StateFlag.State.DENY);
                 region.setFlag(Flags.POTION_SPLASH, StateFlag.State.DENY);
@@ -95,7 +95,7 @@ public class Plugin extends JavaPlugin {
         }
         if (command.getName().equals("template")) {
             if (sender instanceof Player) {
-                if(args.length != 1){
+                if (args.length != 1) {
                     return false;
                 }
                 plotManager.resetPlotToTemplate((Player) sender, args[0]);
@@ -103,10 +103,23 @@ public class Plugin extends JavaPlugin {
         }
         if (command.getName().equals("gotemplate")) {
             if (sender instanceof Player) {
-                if(args.length != 1){
+                if (args.length != 1) {
                     return false;
                 }
                 plotManager.teleportToTemplate((Player) sender, args[0]);
+            }
+        }
+        if (command.getName().equals("resettemplate")) {
+            if (sender instanceof Player) {
+                if (args.length != 1) {
+                    return false;
+                }
+                plotManager.resetTemplate((Player) sender, args[0]);
+            }
+        }
+        if (command.getName().equals("listtemplates")) {
+            if (sender instanceof Player) {
+                plotManager.listTemplates((Player) sender);
             }
         }
         return true;

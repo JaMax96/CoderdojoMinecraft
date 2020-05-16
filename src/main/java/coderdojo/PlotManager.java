@@ -149,6 +149,19 @@ public class PlotManager {
         return new PlotCoordinates(region[0].getX(), region[0].getZ(), region[1].getX(), region[1].getZ());
     }
 
+    public void resetTemplate(Player player, String templateName) {
+        if (!templates.containsKey(templateName)) {
+            player.sendMessage("template " + templateName + " does not exist");
+        } else {
+            PlotCoordinates coords = templates.get(templateName);
+            resetPlot(player.getWorld(), coords.startX, coords.endX, coords.startZ, coords.endZ);
+        }
+    }
+
+    public void listTemplates(Player player) {
+        player.sendMessage(String.join(",", templates.keySet()));
+    }
+
     private static class PlotCoordinates implements Serializable {
         int startX;
         int startZ;

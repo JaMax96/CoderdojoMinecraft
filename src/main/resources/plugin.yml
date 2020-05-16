@@ -33,3 +33,11 @@ commands:
   template:
     description: resets your plot to the template
     usage: /<command> <name>
+  resettemplate:
+    description: resets the template
+    usage: /<command> <name>
+    permission: minecraft.command.ban
+  listtemplates:
+    description: lists all templates
+    usage: /<command>
+    permission: minecraft.command.ban
