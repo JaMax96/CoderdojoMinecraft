@@ -93,6 +93,22 @@ public class Plugin extends JavaPlugin {
                 watchMe.watchMe((Player) sender);
             }
         }
+        if (command.getName().equals("template")) {
+            if (sender instanceof Player) {
+                if(args.length != 1){
+                    return false;
+                }
+                plotManager.resetPlotToTemplate((Player) sender, args[0]);
+            }
+        }
+        if (command.getName().equals("gotemplate")) {
+            if (sender instanceof Player) {
+                if(args.length != 1){
+                    return false;
+                }
+                plotManager.teleportToTemplate((Player) sender, args[0]);
+            }
+        }
         return true;
     }
 

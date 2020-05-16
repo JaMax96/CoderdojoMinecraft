@@ -1,6 +1,7 @@
 main: coderdojo.Plugin
 name: SessionGuard
-version: '0.1'
+version: 0.0.1
+api-version: '1.15'
 description: this is a plugin
 author: coderdojo_linz
 depend:
@@ -13,11 +14,22 @@ commands:
     usage: /<command>
   reset:
     description: reset your plot
+    aliases:
+      - zurücksetzen
     usage: /<command>
   gowatch:
     description: teleports you to the presenting player
+    aliases:
+      - gehzuschaun
     usage: /<command>
   watchme:
     description: sets you as the presenting player
     usage: /<command>
     permission: minecraft.command.ban
+  gotemplate:
+    escription: creates a new template if it does not exist and teleports you to it
+    usage: /<command> <name>
+    permission: minecraft.command.ban
+  template:
+    description: resets your plot to the template
+    usage: /<command> <name>
