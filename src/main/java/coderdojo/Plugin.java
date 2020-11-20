@@ -44,7 +44,7 @@ public class Plugin extends JavaPlugin {
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionManager regions = container.get(BukkitAdapter.adapt(world));
             if (!regions.hasRegion("global" + world.getName())) {
-                ProtectedCuboidRegion region = new ProtectedCuboidRegion("global" + world.getName(), false, BlockVector3.at(-500, 0, -500), BlockVector3.at(500, 255, 500));
+                ProtectedCuboidRegion region = new ProtectedCuboidRegion("global" + world.getName(), false, BlockVector3.at(-500, -1000, -500), BlockVector3.at(500, 1000, 500));
                 region.setFlag(Flags.BUILD, StateFlag.State.DENY);
                 region.setFlag(Flags.POTION_SPLASH, StateFlag.State.DENY);
                 region.setPriority(-1);

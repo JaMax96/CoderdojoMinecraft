@@ -37,7 +37,7 @@ public class RegionGenerator {
         int currentX = data.x;
         int currentZ = data.z;
         BlockVector3[] region = {
-                BlockVector3.at(currentX, 0, currentZ), BlockVector3.at(currentX + (PLOT_SIZE * directionX), 255, currentZ + (PLOT_SIZE * directionZ))
+                BlockVector3.at(currentX, -1000, currentZ), BlockVector3.at(currentX + (PLOT_SIZE * directionX), 1000, currentZ + (PLOT_SIZE * directionZ))
         };
         currentX += ((PLOT_SIZE + PLOT_DISTANCE + 1) * directionX);
         if (isOverflown(currentX, directionX, endX)) {
