@@ -53,6 +53,7 @@ public class PlotManager {
         ProtectedRegion region = createRegion(player);
         getRegionManager(player).addRegion(region);
         resetPlot(player.getWorld(), region);
+        setupBarrier(player.getWorld(), region);
         return region;
     }
 
@@ -84,6 +85,23 @@ public class PlotManager {
                 for (int y = 21; y < world.getMaxHeight(); y++) {
                     world.getBlockAt(x, y, z).setType(Material.AIR);
                 }
+            }
+        }
+    }
+
+    private void setupBarrier(World world, ProtectedRegion region) {
+        int maxX = Math.max(region.getMinimumPoint().getX(), region.getMaximumPoint().getX());
+        int minX = Math.min(region.getMinimumPoint().getX(), region.getMaximumPoint().getX());
+        int maxZ = Math.max(region.getMinimumPoint().getZ(), region.getMaximumPoint().getZ());
+        int minZ = Math.min(region.getMinimumPoint().getZ(), region.getMaximumPoint().getZ());
+        for (int y = 21; y < world.getMaxHeight(); y++) {
+            for (int x = minX - 1; x <= maxX + 1; x++) {
+                world.getBlockAt(x, y, minZ - 1).setType(Material.STRUCTURE_VOID);
+                world.getBlockAt(x, y, maxZ + 1).setType(Material.STRUCTURE_VOID);
+            }
+            for (int z = minZ; z <= maxZ; z++) {
+                world.getBlockAt(minX - 1, y, z).setType(Material.STRUCTURE_VOID);
+                world.getBlockAt(maxX + 1, y, z).setType(Material.STRUCTURE_VOID);
             }
         }
     }
