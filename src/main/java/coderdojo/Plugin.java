@@ -29,9 +29,14 @@ public class Plugin extends JavaPlugin {
         initSettings();
         initGlobalRegion();
         plotManager = new PlotManager(dataService);
-        getServer().getPluginManager().registerEvents(new JoinListener(plotManager), this);
+        initEventListeners();
         initGameModeHandler();
         watchMe = new WatchMe();
+    }
+
+    private void initEventListeners() {
+        getServer().getPluginManager().registerEvents(new JoinListener(plotManager), this);
+        getServer().getPluginManager().registerEvents(new ExplodeListener(), this);
     }
 
     private void initGameModeHandler() {
@@ -65,8 +70,6 @@ public class Plugin extends JavaPlugin {
             world.setTime(5000);
             world.setStorm(false);
             world.setSpawnFlags(false, false);
-            //TODO big enough?
-            world.getWorldBorder().setSize(1000);
         });
     }
 
