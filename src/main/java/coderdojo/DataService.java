@@ -42,8 +42,7 @@ public class DataService {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> void save(String dataName, T data) {
+    public synchronized <T> void save(String dataName, T data) {
         try {
             Map<String, Object> loadedData = loadData();
             if (loadedData == null) {
