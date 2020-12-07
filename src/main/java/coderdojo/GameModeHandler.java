@@ -34,18 +34,19 @@ public class GameModeHandler extends FlagValueChangeHandler<StateFlag.State> {
 
     @Override
     protected boolean onSetValue(LocalPlayer player, Location from, Location to, ApplicableRegionSet toSet, StateFlag.State currentValue, StateFlag.State lastValue, MoveType moveType) {
-        handleFlagValue(player, StateFlag.State.ALLOW.equals(currentValue));
-        return true;
+        return handleFlagValue(player, StateFlag.State.ALLOW.equals(currentValue));
     }
 
     @Override
     protected boolean onAbsentValue(LocalPlayer player, Location from, Location to, ApplicableRegionSet toSet, StateFlag.State lastValue, MoveType moveType) {
-        handleFlagValue(player, false);
-        return true;
+        return handleFlagValue(player, false);
     }
 
-    private void handleFlagValue(LocalPlayer localPlayer, boolean allowed) {
+    private boolean handleFlagValue(LocalPlayer localPlayer, boolean allowed) {
         Player player = Bukkit.getPlayer(localPlayer.getUniqueId());
+        if (player == null) {
+            return false;
+        }
         if (!player.isOp()) {
             if (allowed) {
                 player.setGameMode(GameMode.CREATIVE);
@@ -53,5 +54,6 @@ public class GameModeHandler extends FlagValueChangeHandler<StateFlag.State> {
                 player.setGameMode(GameMode.SPECTATOR);
             }
         }
+        return true;
     }
 }
