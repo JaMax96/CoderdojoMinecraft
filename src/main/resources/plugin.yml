@@ -26,3 +26,6 @@ commands:
     description: sets you as the presenting player
     usage: /<command>
     permission: minecraft.command.ban
+  go:
+    description: go somewhere important
+    usage: /<command> (home/watch/library)

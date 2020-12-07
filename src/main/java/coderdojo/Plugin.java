@@ -1,5 +1,6 @@
 package coderdojo;
 
+import com.google.common.collect.Lists;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
@@ -18,6 +19,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Collections;
+
 public class Plugin extends JavaPlugin {
 
     private PlotManager plotManager;
@@ -32,6 +35,18 @@ public class Plugin extends JavaPlugin {
         initEventListeners();
         initGameModeHandler();
         watchMe = new WatchMe();
+        initGoCommandCompleter();
+    }
+
+    private void initGoCommandCompleter() {
+        getCommand("go").setTabCompleter((sender, command, alias, args) -> {
+                    if (args.length > 1) {
+                        return Collections.emptyList();
+                    } else {
+                        return Lists.newArrayList("home", "watch", "library");
+                    }
+                }
+        );
     }
 
     private void initEventListeners() {
@@ -76,9 +91,7 @@ public class Plugin extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equals("gohome")) {
-            if (sender instanceof Player) {
-                plotManager.sendHome((Player) sender);
-            }
+            return handleGoCommand(sender, "home");
         }
         if (command.getName().equals("reset")) {
             if (sender instanceof Player) {
@@ -86,13 +99,37 @@ public class Plugin extends JavaPlugin {
             }
         }
         if (command.getName().equals("gowatch")) {
-            if (sender instanceof Player) {
-                watchMe.goWatch((Player) sender);
-            }
+            return handleGoCommand(sender, "watch");
         }
         if (command.getName().equals("watchme")) {
             if (sender instanceof Player) {
                 watchMe.watchMe((Player) sender);
+            }
+        }
+        if (command.getName().equals("go")) {
+            return handleGoCommand(sender, args);
+        }
+        return true;
+    }
+
+    private boolean handleGoCommand(CommandSender sender, String... args) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            if (args == null || args.length == 0 || args[0] == null) {
+                return false;
+            }
+            switch (args[0]) {
+                case "home":
+                    plotManager.sendHome(player);
+                    break;
+                case "watch":
+                    watchMe.goWatch(player);
+                    break;
+                case "library":
+                    //nothing yet
+                    break;
+                default:
+                    return false;
             }
         }
         return true;
