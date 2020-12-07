@@ -95,13 +95,13 @@ public class PlotManager {
         int maxZ = Math.max(region.getMinimumPoint().getZ(), region.getMaximumPoint().getZ());
         int minZ = Math.min(region.getMinimumPoint().getZ(), region.getMaximumPoint().getZ());
         for (int y = 21; y < world.getMaxHeight(); y++) {
-            for (int x = minX - 1; x <= maxX + 1; x++) {
-                world.getBlockAt(x, y, minZ - 1).setType(Material.STRUCTURE_VOID);
-                world.getBlockAt(x, y, maxZ + 1).setType(Material.STRUCTURE_VOID);
+            for (int x = minX - 2; x <= maxX + 2; x++) {
+                world.getBlockAt(x, y, minZ - 2).setType(Material.BARRIER);
+                world.getBlockAt(x, y, maxZ + 2).setType(Material.BARRIER);
             }
             for (int z = minZ; z <= maxZ; z++) {
-                world.getBlockAt(minX - 1, y, z).setType(Material.STRUCTURE_VOID);
-                world.getBlockAt(maxX + 1, y, z).setType(Material.STRUCTURE_VOID);
+                world.getBlockAt(minX - 2, y, z).setType(Material.BARRIER);
+                world.getBlockAt(maxX + 2, y, z).setType(Material.BARRIER);
             }
         }
     }

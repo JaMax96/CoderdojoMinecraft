@@ -75,7 +75,6 @@ public class Plugin extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        System.out.println("called with: " + label);
         if (command.getName().equals("gohome")) {
             if (sender instanceof Player) {
                 plotManager.sendHome((Player) sender);
