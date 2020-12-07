@@ -13,31 +13,14 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PlotManager {
 
-    private static final String TEMPLATE_DATASERVICE_NAME = "templates";
-
-    private final DataService dataService;
     private final RegionGenerator plotGenerator;
-    private final RegionGenerator templateGenerator;
-    private Map<String, PlotCoordinates> templates;
 
     public PlotManager(DataService dataService) {
-        this.dataService = dataService;
         this.plotGenerator = new RegionGenerator(-110, -450, 110, 0, "plotGenerator", dataService);
-        this.templateGenerator = new RegionGenerator(-110, 450, 110, 0, "templateGenerator", dataService);
-
-        templates = this.dataService.load(TEMPLATE_DATASERVICE_NAME);
-        if (templates == null) {
-            templates = new HashMap<>();
-        }
     }
 
     public void playerJoined(Player player) {
@@ -144,86 +127,4 @@ public class PlotManager {
         resetPlot(player.getWorld(), getPlot(player));
     }
 
-    public void resetPlotToTemplate(Player player, String templateName) {
-        if (!templates.containsKey(templateName)) {
-            player.sendMessage("template " + templateName + " does not exist");
-        } else {
-            ProtectedRegion plot = getPlot(player);
-            int x1 = plot.getMinimumPoint().getX();
-            int x2 = plot.getMaximumPoint().getX();
-            int z1 = plot.getMinimumPoint().getZ();
-            int z2 = plot.getMaximumPoint().getZ();
-            PlotCoordinates coords = templates.get(templateName);
-            int coordsMinX = Math.min(coords.startX, coords.endX);
-            int coordsMinZ = Math.min(coords.startZ, coords.endZ);
-            int xOffset = coordsMinX - (Math.min(x1, x2));
-            int zOffset = coordsMinZ - (Math.min(z1, z2));
-
-            resetPlotToTemplate(player.getWorld(), x1, x2, z1, z2, xOffset, zOffset);
-        }
-    }
-
-    private void resetPlotToTemplate(World world, int x1, int x2, int z1, int z2, int xOffset, int zOffset) {
-        int maxX = Math.max(x1, x2);
-        int minX = Math.min(x1, x2);
-        int maxZ = Math.max(z1, z2);
-        int minZ = Math.min(z1, z2);
-        for (int x = minX; x <= maxX; x++) {
-            for (int z = minZ; z <= maxZ; z++) {
-                for (int y = 0; y < world.getMaxHeight(); y++) {
-                    Block to = world.getBlockAt(x, y, z);
-                    Block from = world.getBlockAt(x + xOffset, y, z + zOffset);
-                    to.setType(from.getType());
-                    to.setBlockData(from.getBlockData().clone());
-                }
-            }
-        }
-    }
-
-    public void teleportToTemplate(Player player, String templateName) {
-        PlotCoordinates coords;
-        if (!templates.containsKey(templateName)) {
-            BlockVector3[] region = templateGenerator.nextRegion();
-            coords = regionToCoords(region);
-            resetPlot(player.getWorld(), coords.startX, coords.endX, coords.startZ, coords.endZ);
-            templates.put(templateName, coords);
-            dataService.save(TEMPLATE_DATASERVICE_NAME, templates);
-        } else {
-            coords = templates.get(templateName);
-        }
-        teleportPlayerToCoords(player,
-                (coords.startX + coords.endX) / 2,
-                (coords.startZ + coords.endZ) / 2);
-    }
-
-    private PlotCoordinates regionToCoords(BlockVector3[] region) {
-        return new PlotCoordinates(region[0].getX(), region[0].getZ(), region[1].getX(), region[1].getZ());
-    }
-
-    public void resetTemplate(Player player, String templateName) {
-        if (!templates.containsKey(templateName)) {
-            player.sendMessage("template " + templateName + " does not exist");
-        } else {
-            PlotCoordinates coords = templates.get(templateName);
-            resetPlot(player.getWorld(), coords.startX, coords.endX, coords.startZ, coords.endZ);
-        }
-    }
-
-    public void listTemplates(Player player) {
-        player.sendMessage(String.join(",", templates.keySet()));
-    }
-
-    private static class PlotCoordinates implements Serializable {
-        int startX;
-        int startZ;
-        int endX;
-        int endZ;
-
-        public PlotCoordinates(int startX, int startZ, int endX, int endZ) {
-            this.startX = startX;
-            this.startZ = startZ;
-            this.endX = endX;
-            this.endZ = endZ;
-        }
-    }
 }

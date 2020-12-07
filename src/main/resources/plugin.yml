@@ -26,18 +26,3 @@ commands:
     description: sets you as the presenting player
     usage: /<command>
     permission: minecraft.command.ban
-  gotemplate:
-    escription: creates a new template if it does not exist and teleports you to it
-    usage: /<command> <name>
-    permission: minecraft.command.ban
-  template:
-    description: resets your plot to the template
-    usage: /<command> <name>
-  resettemplate:
-    description: resets the template
-    usage: /<command> <name>
-    permission: minecraft.command.ban
-  listtemplates:
-    description: lists all templates
-    usage: /<command>
-    permission: minecraft.command.ban
