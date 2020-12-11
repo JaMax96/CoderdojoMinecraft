@@ -103,7 +103,9 @@ public class Plugin extends JavaPlugin {
                 region.setPriority(-1);
                 regions.addRegion(region);
 
-                try (EditSession editSession = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(world))) {
+                try (EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder()
+                        .maxBlocks(-1)
+                        .world(BukkitAdapter.adapt(world)).build()) {
                     editSession.setBlocks(new CuboidRegion(
                                     BlockVector3.at(-400, 20, -400),
                                     BlockVector3.at(-200, 20, -200)),
