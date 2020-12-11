@@ -1,7 +1,12 @@
 package coderdojo;
 
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.MaxChangedBlocksException;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.Flags;
@@ -15,12 +20,17 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class PlotManager {
 
     private final RegionGenerator plotGenerator;
+    private Logger logger;
 
-    public PlotManager(DataService dataService) {
+    public PlotManager(DataService dataService, Logger logger) {
         this.plotGenerator = new RegionGenerator(0, 0, 20000, 20000, "plotGenerator", dataService);
+        this.logger = logger;
     }
 
     public void playerJoined(Player player) {
@@ -46,29 +56,28 @@ public class PlotManager {
     }
 
     private void resetPlot(World world, ProtectedRegion region) {
-        int x1 = region.getMinimumPoint().getX();
-        int x2 = region.getMaximumPoint().getX();
-        int z1 = region.getMinimumPoint().getZ();
-        int z2 = region.getMaximumPoint().getZ();
-        resetPlot(world, x1, x2, z1, z2);
-    }
+        BlockVector3 min = region.getMinimumPoint();
+        BlockVector3 max = region.getMaximumPoint();
 
-    private void resetPlot(World world, int x1, int x2, int z1, int z2) {
-        int maxX = Math.max(x1, x2);
-        int minX = Math.min(x1, x2);
-        int maxZ = Math.max(z1, z2);
-        int minZ = Math.min(z1, z2);
-        for (int x = minX; x <= maxX; x++) {
-            for (int z = minZ; z <= maxZ; z++) {
-                world.getBlockAt(x, 0, z).setType(Material.BEDROCK);
-                for (int y = 1; y < 20; y++) {
-                    world.getBlockAt(x, y, z).setType(Material.DIRT);
-                }
-                world.getBlockAt(x, 20, z).setType(Material.IRON_BLOCK);
-                for (int y = 21; y < world.getMaxHeight(); y++) {
-                    world.getBlockAt(x, y, z).setType(Material.AIR);
-                }
-            }
+        try (EditSession editSession = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(world))) {
+//            editSession.setBlocks(new CuboidRegion(
+//                            BlockVector3.at(min.getBlockX(), 0, min.getBlockZ()),
+//                            BlockVector3.at(max.getBlockX(), 0, max.getBlockZ())),
+//                    BlockTypes.BEDROCK.getDefaultState());
+//            editSession.setBlocks(new CuboidRegion(
+//                            BlockVector3.at(min.getBlockX(), 1, min.getBlockZ()),
+//                            BlockVector3.at(max.getBlockX(), 19, max.getBlockZ())),
+//                    BlockTypes.DIRT.getDefaultState());
+            editSession.setBlocks(new CuboidRegion(
+                            BlockVector3.at(min.getBlockX(), 20, min.getBlockZ()),
+                            BlockVector3.at(max.getBlockX(), 20, max.getBlockZ())),
+                    BlockTypes.IRON_BLOCK.getDefaultState());
+//            editSession.setBlocks(new CuboidRegion(
+//                            BlockVector3.at(min.getBlockX(), 21, min.getBlockZ()),
+//                            BlockVector3.at(max.getBlockX(), world.getMaxHeight(), max.getBlockZ())),
+//                    BlockTypes.AIR.getDefaultState());
+        } catch (MaxChangedBlocksException e) {
+            logger.log(Level.WARNING, "too many blocks changed for reset", e);
         }
     }
 
@@ -124,7 +133,8 @@ public class PlotManager {
     }
 
     public void resetPlot(Player player) {
-        resetPlot(player.getWorld(), getPlot(player));
+        player.sendMessage("Sorry, reset is currently disabled because the plot is too big");
+//        resetPlot(player.getWorld(), getPlot(player));
     }
 
 }

@@ -31,7 +31,7 @@ public class Plugin extends JavaPlugin {
         DataService dataService = new DataService(getDataFolder());
         initSettings();
         initGlobalRegion();
-        plotManager = new PlotManager(dataService);
+        plotManager = new PlotManager(dataService, getLogger());
         initEventListeners();
         initGameModeHandler();
         watchMe = new WatchMe();
