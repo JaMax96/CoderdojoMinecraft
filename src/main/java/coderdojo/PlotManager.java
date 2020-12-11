@@ -20,7 +20,7 @@ public class PlotManager {
     private final RegionGenerator plotGenerator;
 
     public PlotManager(DataService dataService) {
-        this.plotGenerator = new RegionGenerator(-110, -450, 110, 0, "plotGenerator", dataService);
+        this.plotGenerator = new RegionGenerator(0, 0, 20000, 20000, "plotGenerator", dataService);
     }
 
     public void playerJoined(Player player) {

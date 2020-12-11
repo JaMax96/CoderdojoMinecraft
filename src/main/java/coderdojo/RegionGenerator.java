@@ -4,8 +4,8 @@ import com.sk89q.worldedit.math.BlockVector3;
 
 public class RegionGenerator {
 
-    private static final int PLOT_SIZE = 30;
-    private static final int PLOT_DISTANCE = 8;
+    private static final int PLOT_SIZE = 200;
+    private static final int PLOT_DISTANCE = 100;
 
     private final int startX;
     private final int endX;
