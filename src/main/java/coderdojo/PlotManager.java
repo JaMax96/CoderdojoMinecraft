@@ -94,7 +94,7 @@ public class PlotManager {
         Utils.teleportPlayerToCoords(player, getPlot(player));
     }
 
-    private ProtectedRegion getPlot(Player player) {
+    public ProtectedRegion getPlot(Player player) {
         return getRegionManager(player).getRegion(getPlotName(player));
     }
 

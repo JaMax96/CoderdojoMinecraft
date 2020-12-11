@@ -5,14 +5,17 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.MaxChangedBlocksException;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.event.extent.EditSessionEvent;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.session.SessionManager;
 import org.bukkit.Bukkit;
@@ -42,6 +45,22 @@ public class Plugin extends JavaPlugin {
         initGameModeHandler();
         watchMe = new WatchMe();
         initGoCommandCompleter();
+        initWorldEditListener();
+    }
+
+    private void initWorldEditListener() {
+        WorldEdit.getInstance().getEventBus().register(this);
+    }
+
+    @Subscribe
+    public void onEditSessionEvent(EditSessionEvent event) {
+        if (event.getActor() != null && event.getActor().isPlayer()) {
+            Player player = Bukkit.getPlayer(event.getActor().getUniqueId());
+            if (!player.isOp()) {
+                ProtectedRegion plot = plotManager.getPlot(player);
+                event.setExtent(new PlotLimitingExtent(event.getExtent(), plot.getMinimumPoint(), plot.getMaximumPoint()));
+            }
+        }
     }
 
     private void initGoCommandCompleter() {
