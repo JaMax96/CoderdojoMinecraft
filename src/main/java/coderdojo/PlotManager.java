@@ -15,8 +15,6 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -34,11 +32,10 @@ public class PlotManager {
     }
 
     public void playerJoined(Player player) {
-        player.sendMessage("Dear " + player.getName() + ", welcome to our server!");
         if (!getRegionManager(player).hasRegion(getPlotName(player))) {
             ProtectedRegion plot = createPlot(player);
             getRegionManager(player).addRegion(plot);
-            teleportPlayerToCoords(player, plot);
+            Utils.teleportPlayerToCoords(player, plot);
         }
     }
 
@@ -46,7 +43,7 @@ public class PlotManager {
         ProtectedRegion region = createRegion(player);
         getRegionManager(player).addRegion(region);
         resetPlot(player.getWorld(), region);
-        setupBarrier(player.getWorld(), region);
+        Utils.setupBarrier(player.getWorld(), region);
         return region;
     }
 
@@ -81,37 +78,6 @@ public class PlotManager {
         }
     }
 
-    private void setupBarrier(World world, ProtectedRegion region) {
-        int maxX = Math.max(region.getMinimumPoint().getX(), region.getMaximumPoint().getX());
-        int minX = Math.min(region.getMinimumPoint().getX(), region.getMaximumPoint().getX());
-        int maxZ = Math.max(region.getMinimumPoint().getZ(), region.getMaximumPoint().getZ());
-        int minZ = Math.min(region.getMinimumPoint().getZ(), region.getMaximumPoint().getZ());
-        for (int y = 21; y < world.getMaxHeight(); y++) {
-            for (int x = minX - 2; x <= maxX + 2; x++) {
-                world.getBlockAt(x, y, minZ - 2).setType(Material.BARRIER);
-                world.getBlockAt(x, y, maxZ + 2).setType(Material.BARRIER);
-            }
-            for (int z = minZ; z <= maxZ; z++) {
-                world.getBlockAt(minX - 2, y, z).setType(Material.BARRIER);
-                world.getBlockAt(maxX + 2, y, z).setType(Material.BARRIER);
-            }
-        }
-    }
-
-    private void teleportPlayerToCoords(Player player, ProtectedRegion region) {
-        BlockVector3 middle = region.getMinimumPoint().add(region.getMaximumPoint()).divide(2);
-        teleportPlayerToCoords(player, middle.getX(), middle.getZ());
-    }
-
-    private void teleportPlayerToCoords(Player player, int x, int z) {
-        World world = player.getWorld();
-        int y = world.getMaxHeight();
-        while (y > 0 && world.getBlockAt(x, y - 1, z).getType().equals(Material.AIR)) {
-            y--;
-        }
-        player.teleport(new Location(world, x, y, z));
-    }
-
     private ProtectedRegion createRegion(Player player) {
         BlockVector3[] regionVectors = plotGenerator.nextRegion();
         ProtectedCuboidRegion region = new ProtectedCuboidRegion(getPlotName(player), false, regionVectors[0], regionVectors[1]);
@@ -125,7 +91,7 @@ public class PlotManager {
     }
 
     public void sendHome(Player player) {
-        teleportPlayerToCoords(player, getPlot(player));
+        Utils.teleportPlayerToCoords(player, getPlot(player));
     }
 
     private ProtectedRegion getPlot(Player player) {

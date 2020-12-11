@@ -1,8 +1,13 @@
 package coderdojo;
 
 import com.google.common.collect.Lists;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.MaxChangedBlocksException;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -20,6 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collections;
+import java.util.logging.Level;
 
 public class Plugin extends JavaPlugin {
 
@@ -63,13 +69,30 @@ public class Plugin extends JavaPlugin {
         Bukkit.getWorlds().forEach(world -> {
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionManager regions = container.get(BukkitAdapter.adapt(world));
-            if (!regions.hasRegion("global" + world.getName())) {
-                ProtectedCuboidRegion region = new ProtectedCuboidRegion("global" + world.getName(), false, BlockVector3.at(-100000, -1000, -100000), BlockVector3.at(100000, 1000, 100000));
+            String globalName = "global" + world.getName();
+            if (!regions.hasRegion(globalName)) {
+                ProtectedCuboidRegion region = new ProtectedCuboidRegion(globalName, false, BlockVector3.at(-100000, -1000, -100000), BlockVector3.at(100000, 1000, 100000));
                 region.setFlag(Flags.BUILD, StateFlag.State.DENY);
                 region.setFlag(Flags.POTION_SPLASH, StateFlag.State.DENY);
                 region.setPriority(-1);
 
                 regions.addRegion(region);
+            }
+            String libraryName = "library" + world.getName();
+            if (!regions.hasRegion(libraryName)) {
+                ProtectedCuboidRegion region = new ProtectedCuboidRegion(libraryName, false, BlockVector3.at(-400, -1000, -400), BlockVector3.at(-200, 1000, -200));
+                region.setPriority(-1);
+                regions.addRegion(region);
+
+                try (EditSession editSession = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(world))) {
+                    editSession.setBlocks(new CuboidRegion(
+                                    BlockVector3.at(-400, 20, -400),
+                                    BlockVector3.at(-200, 20, -200)),
+                            BlockTypes.DIAMOND_BLOCK.getDefaultState());
+                } catch (MaxChangedBlocksException e) {
+                    getLogger().log(Level.WARNING, "too many blocks changed for reset", e);
+                }
+                Utils.setupBarrier(world, region);
             }
         });
     }
@@ -126,7 +149,7 @@ public class Plugin extends JavaPlugin {
                     watchMe.goWatch(player);
                     break;
                 case "library":
-                    //nothing yet
+                    Utils.teleportPlayerToCoords(player, -300, -300);
                     break;
                 default:
                     return false;
