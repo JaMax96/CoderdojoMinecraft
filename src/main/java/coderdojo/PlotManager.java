@@ -15,14 +15,20 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PlotManager {
 
+    public static final String PLAYERPLOT_PREFIX = "playerplot-";
     private final RegionGenerator plotGenerator;
     private Logger logger;
 
@@ -32,24 +38,24 @@ public class PlotManager {
     }
 
     public void playerJoined(Player player) {
-        if (!getRegionManager(player).hasRegion(getPlotName(player))) {
+        if (!getRegionManager().hasRegion(getPlotName(player))) {
             ProtectedRegion plot = createPlot(player);
-            getRegionManager(player).addRegion(plot);
+            getRegionManager().addRegion(plot);
             Utils.teleportPlayerToCoords(player, plot);
         }
     }
 
     private ProtectedRegion createPlot(Player player) {
         ProtectedRegion region = createRegion(player);
-        getRegionManager(player).addRegion(region);
+        getRegionManager().addRegion(region);
         resetPlot(player.getWorld(), region);
         Utils.setupBarrier(player.getWorld(), region);
         return region;
     }
 
-    private RegionManager getRegionManager(Player player) {
+    private RegionManager getRegionManager() {
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        return container.get(BukkitAdapter.adapt(player.getWorld()));
+        return container.get(BukkitAdapter.adapt(Bukkit.getWorlds().iterator().next()));
     }
 
     private void resetPlot(World world, ProtectedRegion region) {
@@ -89,7 +95,11 @@ public class PlotManager {
     }
 
     private String getPlotName(Player player) {
-        return "playerplot-" + player.getUniqueId().toString();
+        return getPlotName(player.getUniqueId());
+    }
+
+    private String getPlotName(UUID playerUUID) {
+        return PLAYERPLOT_PREFIX + playerUUID.toString();
     }
 
     public void sendHome(Player player) {
@@ -97,7 +107,11 @@ public class PlotManager {
     }
 
     public ProtectedRegion getPlot(Player player) {
-        return getRegionManager(player).getRegion(getPlotName(player));
+        return getRegionManager().getRegion(getPlotName(player));
+    }
+
+    private ProtectedRegion getPlot(UUID playerUUID) {
+        return getRegionManager().getRegion(getPlotName(playerUUID));
     }
 
     public void resetPlot(Player player) {
@@ -105,4 +119,7 @@ public class PlotManager {
 //        resetPlot(player.getWorld(), getPlot(player));
     }
 
+    public void teleportToPlot(Player player, OfflinePlayer offlinePlayer) {
+        Utils.teleportPlayerToCoords(player, getPlot(offlinePlayer.getUniqueId()));
+    }
 }

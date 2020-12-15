@@ -18,16 +18,16 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.session.SessionManager;
-import org.bukkit.Bukkit;
-import org.bukkit.Difficulty;
-import org.bukkit.GameMode;
-import org.bukkit.GameRule;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class Plugin extends JavaPlugin {
@@ -65,11 +65,19 @@ public class Plugin extends JavaPlugin {
 
     private void initGoCommandCompleter() {
         getCommand("go").setTabCompleter((sender, command, alias, args) -> {
-                    if (args.length > 1) {
-                        return Collections.emptyList();
-                    } else {
-                        return Lists.newArrayList("home", "watch", "library");
+                    switch (args.length) {
+                        case 1:
+                            return Lists.newArrayList("home", "watch", "library", "plot");
+                        case 2:
+                            if (args[0].equals("plot")) {
+                                List<String> playerNames = new ArrayList<>();
+                                for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+                                    playerNames.add(player.getName());
+                                }
+                                return playerNames;
+                            }
                     }
+                    return Collections.emptyList();
                 }
         );
     }
@@ -172,11 +180,27 @@ public class Plugin extends JavaPlugin {
                 case "library":
                     Utils.teleportPlayerToCoords(player, -300, -300);
                     break;
+                case "plot":
+                    if (args.length < 2) {
+                        return false;
+                    }
+                    UUID playerUUID = findUUIDToPlayerName(args[1]);
+                    plotManager.teleportToPlot(player, Bukkit.getOfflinePlayer(playerUUID));
+                    break;
                 default:
                     return false;
             }
         }
         return true;
+    }
+
+    private UUID findUUIDToPlayerName(String playerName) {
+        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+            if (player.getName().equals(playerName)) {
+                return player.getUniqueId();
+            }
+        }
+        throw new IllegalStateException("did not find UUID to player: " + playerName);
     }
 
 }
