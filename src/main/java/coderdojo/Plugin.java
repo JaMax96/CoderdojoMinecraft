@@ -134,6 +134,7 @@ public class Plugin extends JavaPlugin {
             world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
             world.setGameRule(GameRule.DO_FIRE_TICK, false);
             world.setGameRule(GameRule.MOB_GRIEFING, false);
+            world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
             world.setTime(5000);
             world.setStorm(false);
             world.setSpawnFlags(false, false);
