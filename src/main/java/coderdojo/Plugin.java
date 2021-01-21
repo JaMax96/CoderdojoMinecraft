@@ -21,6 +21,7 @@ import com.sk89q.worldguard.session.SessionManager;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -64,22 +65,7 @@ public class Plugin extends JavaPlugin {
     }
 
     private void initGoCommandCompleter() {
-        getCommand("go").setTabCompleter((sender, command, alias, args) -> {
-                    switch (args.length) {
-                        case 1:
-                            return Lists.newArrayList("home", "watch", "library", "plot");
-                        case 2:
-                            if (args[0].equals("plot")) {
-                                List<String> playerNames = new ArrayList<>();
-                                for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-                                    playerNames.add(player.getName());
-                                }
-                                return playerNames;
-                            }
-                    }
-                    return Collections.emptyList();
-                }
-        );
+        getCommand("go").setTabCompleter(new GoCommandCompleter());
     }
 
     private void initEventListeners() {
