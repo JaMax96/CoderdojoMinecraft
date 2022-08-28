@@ -1,7 +1,7 @@
 main: coderdojo.Plugin
 name: SessionGuard
-version: 0.0.1
-api-version: '1.15'
+version: 0.0.2
+api-version: '1.19'
 description: this is a plugin
 author: coderdojo_linz
 depend:
