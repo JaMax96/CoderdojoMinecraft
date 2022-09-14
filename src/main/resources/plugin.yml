@@ -33,3 +33,9 @@ commands:
     description: repair a plot
     usage: /<command> <player>
     permission: minecraft.command.ban
+  creative:
+    description: set your mode to creative, only works on your plot
+    usage: /<command>
+  spectator:
+    description: set your mode to spectator, only works on your plot
+    usage: /<command>

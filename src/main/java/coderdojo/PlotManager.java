@@ -15,10 +15,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -138,5 +135,12 @@ public class PlotManager {
 
     public void teleportToPlot(Player player, OfflinePlayer offlinePlayer) {
         Utils.teleportPlayerToCoords(player, getPlot(offlinePlayer.getUniqueId()));
+    }
+
+    public boolean isOnOwnPlot(Player player) {
+        ProtectedRegion plot = getPlot(player);
+        Location location = player.getLocation();
+        BlockVector3 position = BlockVector3.at(location.getX(), location.getY(), location.getBlockZ());
+        return plot.contains(position);
     }
 }

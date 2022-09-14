@@ -14,17 +14,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
-public class GameModeHandler extends FlagValueChangeHandler<StateFlag.State> {
+public class GameModeFlagValueChangedHandler extends FlagValueChangeHandler<StateFlag.State> {
     public static final Factory FACTORY = new Factory();
 
-    public static class Factory extends Handler.Factory<GameModeHandler> {
+    public static class Factory extends Handler.Factory<GameModeFlagValueChangedHandler> {
         @Override
-        public GameModeHandler create(Session session) {
-            return new GameModeHandler(session);
+        public GameModeFlagValueChangedHandler create(Session session) {
+            return new GameModeFlagValueChangedHandler(session);
         }
     }
 
-    public GameModeHandler(Session session) {
+    public GameModeFlagValueChangedHandler(Session session) {
         super(session, Flags.BUILD);
     }
 

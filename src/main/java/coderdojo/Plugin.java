@@ -1,6 +1,5 @@
 package coderdojo;
 
-import com.google.common.collect.Lists;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.MaxChangedBlocksException;
 import com.sk89q.worldedit.WorldEdit;
@@ -21,13 +20,9 @@ import com.sk89q.worldguard.session.SessionManager;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -35,6 +30,7 @@ public class Plugin extends JavaPlugin {
 
     private PlotManager plotManager;
     private WatchMe watchMe;
+    private GameModeChangeCommand gameModeChangeCommand;
 
     @Override
     public void onEnable() {
@@ -47,6 +43,7 @@ public class Plugin extends JavaPlugin {
         watchMe = new WatchMe();
         initCommandCompleters();
         initWorldEditListener();
+        gameModeChangeCommand = new GameModeChangeCommand(plotManager);
     }
 
     private void initWorldEditListener() {
@@ -76,7 +73,7 @@ public class Plugin extends JavaPlugin {
 
     private void initGameModeHandler() {
         SessionManager sessionManager = WorldGuard.getInstance().getPlatform().getSessionManager();
-        sessionManager.registerHandler(GameModeHandler.FACTORY, null);
+        sessionManager.registerHandler(GameModeFlagValueChangedHandler.FACTORY, null);
     }
 
     private void initGlobalRegion() {
@@ -152,6 +149,16 @@ public class Plugin extends JavaPlugin {
         if (command.getName().equals("repair")) {
             if (sender instanceof Player) {
                 plotManager.repairPlot((Player) sender);
+            }
+        }
+        if (command.getName().equals("spectator")) {
+            if (sender instanceof Player) {
+                gameModeChangeCommand.spectator((Player) sender);
+            }
+        }
+        if (command.getName().equals("creative")) {
+            if (sender instanceof Player) {
+                gameModeChangeCommand.creative((Player) sender);
             }
         }
         return true;
