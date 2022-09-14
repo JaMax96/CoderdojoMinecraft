@@ -39,3 +39,6 @@ commands:
   spectator:
     description: set your mode to spectator, only works on your plot
     usage: /<command>
+  nightvision:
+    description: give yourself nightvision for 5 minutes
+    usage: /<command>
