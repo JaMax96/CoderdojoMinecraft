@@ -16,12 +16,12 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -117,6 +117,23 @@ public class PlotManager {
     public void resetPlot(Player player) {
         player.sendMessage("Sorry, reset is currently disabled because the plot is too big");
 //        resetPlot(player.getWorld(), getPlot(player));
+    }
+
+    public void repairPlot(Player player) {
+        ProtectedRegion region = getPlot(player);
+        World world = player.getWorld();
+
+        BlockVector3 min = region.getMinimumPoint();
+        BlockVector3 max = region.getMaximumPoint();
+
+        for (int x = min.getX(); x <= max.getX(); x++) {
+            for (int z = min.getZ(); z <= max.getZ(); z++) {
+                Block block = world.getBlockAt(x, 20, z);
+                if (block.getType().equals(Material.GRASS_BLOCK)) {
+                    block.setType(Material.IRON_BLOCK);
+                }
+            }
+        }
     }
 
     public void teleportToPlot(Player player, OfflinePlayer offlinePlayer) {

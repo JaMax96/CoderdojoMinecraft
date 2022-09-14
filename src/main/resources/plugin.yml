@@ -29,3 +29,7 @@ commands:
   go:
     description: go somewhere important
     usage: /<command> (home/watch/library)
+  repair:
+    description: repair a plot
+    usage: /<command> <player>
+    permission: minecraft.command.ban

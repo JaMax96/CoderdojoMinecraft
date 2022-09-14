@@ -45,7 +45,7 @@ public class Plugin extends JavaPlugin {
         initEventListeners();
         initGameModeHandler();
         watchMe = new WatchMe();
-        initGoCommandCompleter();
+        initCommandCompleters();
         initWorldEditListener();
     }
 
@@ -64,8 +64,9 @@ public class Plugin extends JavaPlugin {
         }
     }
 
-    private void initGoCommandCompleter() {
+    private void initCommandCompleters() {
         getCommand("go").setTabCompleter(new GoCommandCompleter());
+        getCommand("repair").setTabCompleter(new RepairCommandCompleter());
     }
 
     private void initEventListeners() {
@@ -147,6 +148,11 @@ public class Plugin extends JavaPlugin {
         }
         if (command.getName().equals("go")) {
             return handleGoCommand(sender, args);
+        }
+        if (command.getName().equals("repair")) {
+            if (sender instanceof Player) {
+                plotManager.repairPlot((Player) sender);
+            }
         }
         return true;
     }
